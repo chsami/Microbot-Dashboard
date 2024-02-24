@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class SignalRService {
@@ -7,7 +8,7 @@ export class SignalRService {
 
   constructor() {
     this.wsConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5029/microbot")
+      .withUrl(environment.api + "/microbot")
       .withAutomaticReconnect([5000, 10000, 30000])
       .build();
 
