@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, throwError} from "rxjs";
 import {MessageService} from "primeng/api";
-import {environment} from "../environment/environment";
+import {environment} from "../environments/environment";
 @Injectable()
 export class AppService {
   constructor(private http: HttpClient, private messageService: MessageService) { }
