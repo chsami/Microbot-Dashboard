@@ -7,7 +7,7 @@
 <!-- * * * * * * * to get started with your project! * * * * * * * * -->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
-<style>
+<style lang="css">
   :host {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 14px;
@@ -15,28 +15,43 @@
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100%;
   }
 </style>
+<p-menubar [model]="menuitems">
+  <ng-template pTemplate="end">
+    <a class="p-menuitem-text ng-star-inserted" data-pc-section="label"
+       href="https://github.com/chsami/microbot-dashboard" target="_blank"><i class="pi pi-github mr-1"></i>Github</a>
+  </ng-template>
+</p-menubar>
 
-<div>
-  <p-table [value]="[{code: '123', name: 'Zezima', category: 'Woodcutting', quantity: 1}]" [tableStyle]="{ 'min-width': '50rem' }">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Code</th>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Quantity</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-product>
-      <tr>
-        <td>{{ product.code }}</td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.category }}</td>
-        <td>{{ product.quantity }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
+<p-toast></p-toast>
+<div class="container mx-auto h-screen flex flex-col items-center gap-8">
+  <h1 class="text-3xl">Microbot Dashboard</h1>
+  <p-panel header="Token" class="flex flex-col w-full h-full items-start gap-8 w-full">
+    <div class="mb-8" *ngIf="token">
+      <ng-container *ngIf="existingTokenMessage; else newToken">
+        <p-message severity="info"
+                   [text]="existingTokenMessage"
+                   class="flex mb-8">
+        </p-message>
+      </ng-container>
+      <ng-template #newToken>
+        <p-message severity="warn"
+                   text="Copy this token in your runelite client to create a connection with the dashboard. Do not share this token with anyone!"
+                   class="flex mb-8">
+        </p-message>
+      </ng-template>
+
+      <div class="flex cursor-pointer hover:opacity-80">
+        <p-message severity="success" [text]="token" (click)="onCopyToken(token)" class="flex mb-8"
+                   pTooltip="Click to copy!"></p-message>
+      </div>
+    </div>
+    <div>
+      <p-button *ngIf="!token" size="small" (click)="onGenerateToken()" [loading]="loading"><span class="mr-2">Generate new token</span></p-button>
+    </div>
+  </p-panel>
 </div>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
