@@ -16,6 +16,8 @@ import {MessageModule} from "primeng/message";
 import { TooltipModule } from 'primeng/tooltip';
 import {MenubarModule} from "primeng/menubar";
 import {SignalRService} from "./services/signalr.service";
+import {CardModule} from "primeng/card";
+import {BotCardComponent} from "./bot-card/bot-card.component";
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import {SignalRService} from "./services/signalr.service";
     ToastModule,
     MessageModule,
     TooltipModule,
-    MenubarModule
+    MenubarModule,
+    CardModule,
+    BotCardComponent
   ],
   providers: [importProvidersFrom(HttpClientModule), AppService, MessageService, SignalRService],
   bootstrap: [AppComponent]

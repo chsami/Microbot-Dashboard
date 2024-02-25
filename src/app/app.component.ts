@@ -14,12 +14,13 @@ import {finalize} from "rxjs";
 export class AppComponent {
   title = 'angular-test';
   token = ''
-  existingTokenMessage = ''
   private tempTextArea: HTMLTextAreaElement | undefined;
   menuitems: MenuItem[]
   loading = false;
-
-  constructor(private appService: AppService, private clipboardService: ClipboardService, private messageService: MessageService, private signalRService: SignalRService) {
+  hasRuneliteInstance = false
+  LOCAL_STORAGE_KEY = "microbot-token"
+  generatedToken = false
+  constructor(private appService: AppService, private clipboardService: ClipboardService, private messageService: MessageService, public signalRService: SignalRService) {
     this.menuitems = [{
       label: 'Home',
       icon: 'pi pi-home',
@@ -33,15 +34,17 @@ export class AppComponent {
 
   async onGenerateToken() {
     this.loading = true;
-    this.appService.getToken().pipe(finalize(() => this.loading = false)).subscribe(token => {
-      this.token = token;
-      localStorage.setItem('microbot-token', token)
-
-      this.signalRService.openSignalRConnection()
-    })
+    this.appService
+      .getToken()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe(token => {
+        this.token = token;
+        localStorage.setItem('microbot-token', token)
+        this.signalRService.openSignalRConnection(this.token)
+        this.generatedToken = true
+      })
 
   }
-
 
 
   async onCopyToken(content: string) {
@@ -50,10 +53,21 @@ export class AppComponent {
   }
 
   checkExistingToken() {
-    this.token = localStorage.getItem('microbot-token') as string
+    this.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
     if (this.token) {
-      this.existingTokenMessage = 'Looks like you already have a token generated!'
-      this.signalRService.openSignalRConnection();
+      this.appService.tokenExists(this.token).subscribe((result: boolean) => {
+          if (!result) {
+            this.resetToken();
+          } else {
+            this.signalRService.openSignalRConnection(this.token);
+          }
+        }
+      )
     }
+  }
+
+  resetToken() {
+    this.token = "";
+    localStorage.removeItem(this.LOCAL_STORAGE_KEY)
   }
 }

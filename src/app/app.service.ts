@@ -23,6 +23,12 @@ export class AppService {
     return throwError(() => new Error('Something bad happened; please try again later.'));
   }
 
+  tokenExists(token: string) {
+    return this.http.post<boolean>(environment.api +'/token', {token}).pipe(
+      catchError((err) => this.handleError(err))
+    );
+  }
+
   getToken() {
     return this.http.get<string>(environment.api +'/token').pipe(
       catchError((err) => this.handleError(err))

@@ -1,0 +1,7 @@
+<p-card [header]="botPlugin.name" subheader="" [style]="{ width: '360px' }">
+  <div class="card flex justify-content-center">
+<!--    <p-button class="mr-5 bg-transparent" >NMZ</p-button>-->
+    <p-selectButton [options]="stateOptions" [(ngModel)]="botPlugin.active" optionLabel="label" optionValue="value"></p-selectButton>
+
+  </div>
+</p-card>
