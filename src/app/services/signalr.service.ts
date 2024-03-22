@@ -14,7 +14,7 @@ export class SignalRService {
 
   openSignalRConnection(token: string) {
     this.wsConnection = new HubConnectionBuilder()
-      .withUrl(environment.api + "/microbot?token=" + token)
+      .withUrl(environment.baseUrl + "/microbot?token=" + token)
       .withAutomaticReconnect([5000, 10000, 30000])
       .build();
 

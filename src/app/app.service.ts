@@ -34,4 +34,10 @@ export class AppService {
       catchError((err) => this.handleError(err))
     );
   }
+
+  getPlayercount() {
+    return this.http.get<number>(environment.api + '/session/count').pipe(
+      catchError((err) => this.handleError(err))
+    );
+  }
 }

@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  api: 'https://microbot-api.azurewebsites.net'
+  baseUrl: 'https://microbot-api.azurewebsites.net',
+  api: 'https://microbot-api.azurewebsites.net/api',
+  version: '0.2'
 };

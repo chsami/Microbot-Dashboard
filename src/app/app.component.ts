@@ -1,10 +1,9 @@
 import {Component} from '@angular/core';
 import {AppService} from "./app.service";
-import {DOCUMENT} from '@angular/common';
 import {ClipboardService} from "./clipboard.service";
 import {MenuItem, MessageService} from "primeng/api";
 import {SignalRService} from "./services/signalr.service";
-import {finalize} from "rxjs";
+import {environment} from "../environments/environment";
 
 @Component({
   selector: 'app-root',
@@ -14,12 +13,13 @@ import {finalize} from "rxjs";
 export class AppComponent {
   title = 'angular-test';
   token = ''
-  private tempTextArea: HTMLTextAreaElement | undefined;
   menuitems: MenuItem[]
   loading = false;
   hasRuneliteInstance = false
   LOCAL_STORAGE_KEY = "microbot-token"
   generatedToken = false
+  playercount = 0;
+  version = ''
   constructor(private appService: AppService, private clipboardService: ClipboardService, private messageService: MessageService, public signalRService: SignalRService) {
     this.menuitems = [{
       label: 'Home',
@@ -29,11 +29,17 @@ export class AppComponent {
       icon: 'pi pi-info-circle',
     }]
 
-    this.checkExistingToken()
+    this.version = environment.version;
+    this.appService.getPlayercount().subscribe((result) => {
+      this.playercount = result
+    })
+
+    //this.checkExistingToken()
   }
 
   async onGenerateToken() {
-    this.loading = true;
+    alert('Coming soon!')
+    /*this.loading = true;
     this.appService
       .getToken()
       .pipe(finalize(() => this.loading = false))
@@ -42,7 +48,7 @@ export class AppComponent {
         localStorage.setItem('microbot-token', token)
         this.signalRService.openSignalRConnection(this.token)
         this.generatedToken = true
-      })
+      })*/
 
   }
 
