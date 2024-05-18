@@ -18,7 +18,9 @@ export class UserService {
   }
 
   fetchUserInfo() {
-    this.http.get<DiscordUser>(environment.api + '/auth/userinfo').pipe(take(1)).subscribe(
+    this.http.get<DiscordUser>(environment.api + '/auth/userinfo')
+      .pipe(take(1))
+      .subscribe(
       (user) => this.userSubject.next(user)
     );
   }

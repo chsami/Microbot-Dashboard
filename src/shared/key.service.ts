@@ -16,11 +16,10 @@ export class KeyService {
   }
 
   getKeys() {
-    return this.http.get<ScriptKey[]>(environment.api + '/scriptKeys')
+    this.http.get<ScriptKey[]>(environment.api + '/scriptKeys')
       .pipe(take(1))
       .subscribe((keys) => {
         this.keysSubject.next(keys)
-        console.log(keys)
     })
   }
 

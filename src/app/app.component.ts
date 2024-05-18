@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
 import {MenuItem, MenuItemCommandEvent} from "primeng/api";
 import {UserService} from "../shared/user.service";
-import {Observable, of} from "rxjs";
+import {Observable, skip} from "rxjs";
 import {DiscordUser} from "./models/DiscordUser";
 import {AppService} from "./app.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {LoadingService} from "../shared/loading.service";
-import {finalize} from "rxjs/operators";
 import {KeyService} from "../shared/key.service";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -19,9 +19,10 @@ export class AppComponent {
   LOCAL_STORAGE_KEY = "microbot-id"
   loading$ = this.loadingService.loading$;
   public user$: Observable<DiscordUser | null>;
-  loading = false
+  loading = true
 
-  constructor(private userService: UserService, protected router: Router, private loadingService: LoadingService, private appService: AppService, private activatedRoute: ActivatedRoute, private keysService: KeyService) {
+  constructor(private userService: UserService, protected router: Router, private loadingService: LoadingService, private appService: AppService, private route: ActivatedRoute, private keysService: KeyService) {
+    console.log(this.route.snapshot); // Access your query params here
     this.menuitems = [{
       label: 'Home',
       icon: 'pi pi-home',
@@ -46,27 +47,29 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    this.loading = true
     // Subscribe to query parameters
-    this.activatedRoute.queryParams.subscribe(params => {
-      const code = params['code'];
-      this.userService.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
-      if (code) {
-        this.appService.fetchAccessToken(code)
-          .pipe(finalize(() => this.loading = false))
-          .subscribe((result) => {
-            this.userService.token = result
-            localStorage.setItem(this.LOCAL_STORAGE_KEY, result)
-            this.router.navigate(['/'])
-          })
-      } else {
-        if (this.userService.token) {
-          this.keysService.getKeys()
-          this.userService.fetchUserInfo()
+    this.route.queryParamMap
+      .pipe(skip(1))
+      .subscribe((queryParams: ParamMap) => {
+        this.loading = true
+        const code = queryParams.get('code')
+        this.userService.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
+        if (code) {
+          this.appService.fetchAccessToken(code)
+            .pipe(finalize(() => this.loading = false))
+            .subscribe((result) => {
+              this.userService.token = result
+              localStorage.setItem(this.LOCAL_STORAGE_KEY, result)
+              this.router.navigate(['/'])
+            })
+        } else {
+          if (this.userService.token) {
+            this.keysService.getKeys()
+            this.userService.fetchUserInfo()
+          }
+          this.loading = false
         }
-        this.loading = false
-      }
-    });
+      })
   }
 
   logout() {
