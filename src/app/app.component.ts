@@ -1,9 +1,13 @@
 import {Component} from '@angular/core';
+import {MenuItem, MenuItemCommandEvent} from "primeng/api";
+import {UserService} from "../shared/user.service";
+import {Observable, of} from "rxjs";
+import {DiscordUser} from "./models/DiscordUser";
 import {AppService} from "./app.service";
-import {ClipboardService} from "./clipboard.service";
-import {MenuItem, MessageService} from "primeng/api";
-import {SignalRService} from "./services/signalr.service";
-import {environment} from "../environments/environment";
+import {ActivatedRoute, Router} from "@angular/router";
+import {LoadingService} from "../shared/loading.service";
+import {finalize} from "rxjs/operators";
+import {KeyService} from "../shared/key.service";
 
 @Component({
   selector: 'app-root',
@@ -11,69 +15,63 @@ import {environment} from "../environments/environment";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'angular-test';
-  token = ''
   menuitems: MenuItem[]
-  loading = false;
-  hasRuneliteInstance = false
-  LOCAL_STORAGE_KEY = "microbot-token"
-  generatedToken = false
-  playercount = 0;
-  version = ''
-  constructor(private appService: AppService, private clipboardService: ClipboardService, private messageService: MessageService, public signalRService: SignalRService) {
+  LOCAL_STORAGE_KEY = "microbot-id"
+  loading$ = this.loadingService.loading$;
+  public user$: Observable<DiscordUser | null>;
+  loading = false
+
+  constructor(private userService: UserService, protected router: Router, private loadingService: LoadingService, private appService: AppService, private activatedRoute: ActivatedRoute, private keysService: KeyService) {
     this.menuitems = [{
       label: 'Home',
       icon: 'pi pi-home',
-    }, {
-      label: 'About',
-      icon: 'pi pi-info-circle',
-    }]
-
-    this.version = environment.version;
-    this.appService.getPlayercount().subscribe((result) => {
-      this.playercount = result
-    })
-
-    //this.checkExistingToken()
-  }
-
-  async onGenerateToken() {
-    alert('Coming soon!')
-    /*this.loading = true;
-    this.appService
-      .getToken()
-      .pipe(finalize(() => this.loading = false))
-      .subscribe(token => {
-        this.token = token;
-        localStorage.setItem('microbot-token', token)
-        this.signalRService.openSignalRConnection(this.token)
-        this.generatedToken = true
-      })*/
-
-  }
-
-
-  async onCopyToken(content: string) {
-    this.clipboardService.copy(content)
-    this.messageService.add({severity: 'success', summary: 'Success', detail: 'Succesfull copy!'})
-  }
-
-  checkExistingToken() {
-    this.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
-    if (this.token) {
-      this.appService.tokenExists(this.token).subscribe((result: boolean) => {
-          if (!result) {
-            this.resetToken();
-          } else {
-            this.signalRService.openSignalRConnection(this.token);
-          }
+      command(event: MenuItemCommandEvent) {
+        router.navigate(['/']);
+      },
+    },
+      {
+        label: 'Pricing',
+        icon: 'pi pi-dollar',
+        command(event: MenuItemCommandEvent) {
+          router.navigate(['/pricing']);
+        },
+      }, {
+        label: 'About',
+        icon: 'pi pi-info-circle',
+        command(event: MenuItemCommandEvent) {
+          router.navigate(['/about']);
         }
-      )
-    }
+      }]
+    this.user$ = userService.user$;
   }
 
-  resetToken() {
-    this.token = "";
-    localStorage.removeItem(this.LOCAL_STORAGE_KEY)
+  ngOnInit(): void {
+    this.loading = true
+    // Subscribe to query parameters
+    this.activatedRoute.queryParams.subscribe(params => {
+      const code = params['code'];
+      this.userService.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
+      if (code) {
+        this.appService.fetchAccessToken(code)
+          .pipe(finalize(() => this.loading = false))
+          .subscribe((result) => {
+            this.userService.token = result
+            localStorage.setItem(this.LOCAL_STORAGE_KEY, result)
+            this.router.navigate(['/'])
+          })
+      } else {
+        if (this.userService.token) {
+          this.keysService.getKeys()
+          this.userService.fetchUserInfo()
+        }
+        this.loading = false
+      }
+    });
   }
+
+  logout() {
+    localStorage.removeItem(this.LOCAL_STORAGE_KEY)
+    this.userService.resetUser()
+  }
+
 }

@@ -17,7 +17,10 @@
     "@angular/platform-browser-dynamic": "^17.2.2",
     "@angular/router": "^17.2.2",
     "@microsoft/signalr": "^8.0.0",
+    "@stripe/stripe-js": "^3.4.0",
+    "ngx-stripe": "^17.2.0",
     "ngx-window-token": "^7.0.0",
+    "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
     "primeng": "^17.7.0",
     "rxjs": "^7.8.1",
@@ -37,7 +40,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1",
     "typescript": "~5.3.3"
   },
   "engines": {

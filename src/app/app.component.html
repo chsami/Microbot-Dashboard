@@ -1,12 +1,3 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
 <style lang="css">
   :host {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -20,45 +11,21 @@
 </style>
 <p-menubar [model]="menuitems">
   <ng-template pTemplate="end">
-    <a class="p-menuitem-text ng-star-inserted" data-pc-section="label"
-       href="https://github.com/chsami/microbot-dashboard" target="_blank"><i class="pi pi-github mr-1"></i>Github</a>
+    <a class="p-menuitem-text ng-star-inserted" data-pc-section="label" class="mr-4"
+       href="https://github.com/chsami/microbot" target="_blank"><i class="pi pi-github mr-2"></i>Github</a>
+    <a *ngIf="user$ | async" class="p-menuitem-text ng-star-inserted" data-pc-section="label"
+       href="#" (click)="logout()"><i class="pi pi-sign-out mr-2"></i>Logout</a>
   </ng-template>
 </p-menubar>
 
 <p-toast></p-toast>
-<div class="container mx-auto h-screen flex flex-col items-center gap-8">
-  <h1 class="text-3xl">Microbot Dashboard {{ version }}</h1>
-  <h1 class="text-2xl">PlayerCount: {{ playercount }}</h1>
-  <p-panel *ngIf="!token || generatedToken" header="Token" class="flex flex-col w-full h-full items-start gap-8">
-    <div class="mb-8" *ngIf="token && generatedToken">
-      <ng-template>
-        <p-message severity="warn"
-                   text="Copy this token in your runelite client to create a connection with the dashboard. Do not share this token with anyone!"
-                   class="flex mb-8">
-        </p-message>
-      </ng-template>
 
-      <div class="flex cursor-pointer hover:opacity-80">
-        <p-message severity="success" [text]="token" (click)="onCopyToken(token)" class="flex"
-                   pTooltip="Click to copy!"></p-message>
-      </div>
-    </div>
-    <div *ngIf="!token">
-      <p-button  size="small" (click)="onGenerateToken()" [loading]="loading"><span class="mr-2">Generate new token</span></p-button>
-    </div>
-  </p-panel>
-  <div *ngIf="token" class="flex flex-wrap justify-evenly gap-8">
-    <app-bot-card *ngFor="let botPlugin of signalRService.botPlugins | async" [botPlugin]="botPlugin"></app-bot-card>
-  </div>
-
-</div>
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<p-progressSpinner
+  *ngIf="loading$ | async"
+  class="flex justify-content-center"
+  styleClass="w-4rem h-4rem"
+  strokeWidth="3"
+  fill="var(--surface-ground)"
+  animationDuration=".5s"/>
 
 <router-outlet></router-outlet>

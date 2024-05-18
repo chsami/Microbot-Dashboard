@@ -1,0 +1,23 @@
+/* src/app/pricing/pricing.component.css */
+.pricing-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.pricing-card {
+  margin: 1rem;
+}
+
+.pricing-card h2 {
+  margin: 0;
+  color: #4CAF50;
+}
+
+.pricing-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.pricing-card ul li {
+  margin: 0.5rem 0;
+}

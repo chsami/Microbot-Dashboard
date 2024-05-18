@@ -12,7 +12,7 @@ export class SignalRService {
     this.wsConnection = null;
   }
 
-  openSignalRConnection(token: string) {
+  openSignalRConnection(token: string, userId: string | undefined) {
     this.wsConnection = new HubConnectionBuilder()
       .withUrl(environment.baseUrl + "/microbot?token=" + token)
       .withAutomaticReconnect([5000, 10000, 30000])
@@ -27,7 +27,7 @@ export class SignalRService {
     });
     this.wsConnection.start()
       .then(() => this.invoke("SendMessage", "User1", "Hello"))
-      .then(() =>  this.invoke("AddToGroup", token))
+      .then(() =>  this.invoke("AddToGroup", userId))
   }
 
   on(methodName: string, newMethod: (...args: any[]) => any) {
