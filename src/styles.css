@@ -18,3 +18,10 @@ a:hover, a:active {
   text-decoration: underline; /* Adds underline on hover/active */
 }
 
+html {
+  height: 100%;
+}
+
+body {
+  height: calc(100% - 100px)
+}
