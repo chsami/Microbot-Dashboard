@@ -48,28 +48,32 @@ export class AppComponent {
 
   ngOnInit(): void {
     // Subscribe to query parameters
-    this.route.queryParamMap
-      .pipe(skip(1))
-      .subscribe((queryParams: ParamMap) => {
-        this.loading = true
-        const code = queryParams.get('code')
-        this.userService.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
-        if (code) {
-          this.appService.fetchAccessToken(code)
-            .pipe(finalize(() => this.loading = false))
-            .subscribe((result) => {
-              this.userService.token = result
-              localStorage.setItem(this.LOCAL_STORAGE_KEY, result)
-              this.router.navigate(['/'])
-            })
-        } else {
-          if (this.userService.token) {
-            this.keysService.getKeys()
-            this.userService.fetchUserInfo()
+    // have to do this dirty fix, because initial load in app.component does not include query params
+    if (window.location.href.includes('code')) {
+      this.route.queryParamMap
+        .pipe(skip(1))
+        .subscribe((queryParams: ParamMap) => {
+          this.loading = true
+          const code = queryParams.get('code')
+          this.userService.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
+          if (code) {
+            this.appService.fetchAccessToken(code)
+              .pipe(finalize(() => this.loading = false))
+              .subscribe((result) => {
+                this.userService.token = result
+                localStorage.setItem(this.LOCAL_STORAGE_KEY, result)
+                this.router.navigate(['/'])
+              })
           }
-          this.loading = false
-        }
-      })
+        })
+    } else {
+      this.userService.token = localStorage.getItem(this.LOCAL_STORAGE_KEY) as string
+      if (this.userService.token) {
+        this.keysService.getKeys()
+        this.userService.fetchUserInfo()
+      }
+      this.loading = false
+    }
   }
 
   logout() {
