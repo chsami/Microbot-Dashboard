@@ -31,7 +31,7 @@ jobs:
           app_location: "/" # App source code path
           api_location: "" # Api source code path - optional
           output_location: "dist/angular-test" # Built app content directory - optional
-          config_file_location: "./src"
+          config_file_location: "src"
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
